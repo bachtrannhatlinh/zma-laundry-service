@@ -1,0 +1,621 @@
+// Global styles - Hide scrollbar completely
+* {
+  // Hide scrollbar for webkit browsers (Chrome, Safari, newer Edge)
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent !important;
+    display: none !important;
+  }
+}
+
+// Hide scrollbar for Firefox and other browsers
+html {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  // Ensure no horizontal scroll
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  
+  // Additional webkit scrollbar hiding
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+}
+
+// Hide scrollbar for all containers
+div, section, main, article {
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+}
+
+// Additional global scrollbar hiding
+:root {
+  --scrollbar-width: 0px;
+}
+
+// Force hide scrollbar on all elements that might scroll
+[class*="zaui"], 
+[class*="zmp"], 
+.app,
+#app,
+#root {
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+// Homepage Styles
+.homepage {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 0;
+  padding-bottom: 100px; // Space for fixed button
+  overflow-x: hidden !important; // Prevent horizontal scroll
+  
+  // Hide scrollbar specifically for this page
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+}
+
+// ZMP-UI specific scrollbar hiding
+.zaui-page,
+.zmp-page {
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.hero-section {
+  padding: 40px 20px 30px;
+  text-align: center;
+  color: white;
+}
+
+.hero-content {
+  .hero-icon {
+    color: #ffd700;
+    margin-bottom: 16px;
+  }
+  
+  .hero-title {
+    color: white !important;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  
+  .hero-subtitle {
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-bottom: 4px;
+  }
+}
+
+.services-section {
+  padding: 24px 16px;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  margin-top: -10px;
+}
+
+.section-title {
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+.service-card {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 1px solid #e8eaff;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+    background: #e8eaff;
+  }
+  
+  .service-icon {
+    color: #667eea;
+    margin-bottom: 12px;
+  }
+  
+  .service-title {
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  
+  .service-desc {
+    color: #666;
+    line-height: 1.4;
+  }
+}
+
+// Features Section
+.features-section {
+  padding: 24px 16px;
+  background: white;
+  
+  .features-title {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .feature-list {
+    .feature-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      .feature-icon {
+        color: #4caf50;
+        margin-right: 12px;
+        font-size: 18px;
+      }
+      
+      .feature-text {
+        color: #555;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Footer Info
+.footer-info {
+  padding: 16px;
+  background: white;
+  text-align: center;
+  
+  .contact-info {
+    color: #666;
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Fixed CTA Button for Homepage
+.home-cta-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 16px;
+  border-top: 1px solid #e0e6ed;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  
+  .home-cta-button {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+  
+  .cta-note {
+    color: #666;
+    text-align: center;
+    font-style: italic;
+  }
+}
+
+// Legacy CTA styles (keep for compatibility)
+.cta-section {
+  padding: 24px 16px;
+  text-align: center;
+  
+  .cta-button {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+  
+  .cta-note {
+    color: #666;
+    font-style: italic;
+  }
+}
+
+.footer-section {
+  padding: 16px;
+  text-align: center;
+  
+  .footer-logo {
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+}
+
+// Header styles to ensure it's always visible
+.zaui-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1001 !important;
+  background: white !important;
+  border-bottom: 1px solid #e0e6ed !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+// Register Page Styles
+.register-page {
+  background: #f5f6fa;
+  padding: 0;
+  padding-top: 80px; // Increased space for header
+  padding-bottom: 100px; // Space for fixed button
+  overflow-x: hidden !important; // Prevent horizontal scroll
+  min-height: 100vh;
+  
+  // Hide scrollbar specifically for register page
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.info-card {
+  margin: 16px;
+  margin-top: 16px; // Ensure proper spacing from header
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: none;
+  background: white;
+  padding: 20px;
+  
+  // First card gets extra top margin
+  &:first-of-type {
+    margin-top: 32px; // Increased margin for first card
+  }
+  
+  .card-title {
+    display: flex;
+    align-items: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    
+    .title-icon {
+      margin-right: 12px;
+      color: #667eea;
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .form-input {
+    border-radius: 8px;
+    border: 1px solid #e0e6ed;
+    
+    &:focus {
+      border-color: #667eea;
+    }
+  }
+}
+
+.order-id-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  
+  .order-id-input {
+    flex: 1;
+  }
+}
+
+.service-options {
+  .service-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 2px solid #e0e6ed;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &.selected {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+    
+    .service-name {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .service-price {
+      color: #667eea;
+      font-weight: 600;
+    }
+  }
+}
+
+// Clothing Items Selection Styles
+.clothing-item-card {
+  background: #f8f9ff;
+  border: 1px solid #e8eaff;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+    background: #e8eaff;
+  }
+  
+  .item-name {
+    color: #333;
+    font-weight: 500;
+    margin: 8px 0 4px;
+  }
+  
+  .item-price {
+    color: #667eea;
+    font-weight: 600;
+  }
+}
+
+.selected-items {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e6ed;
+  
+  .selected-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+  }
+  
+  .selected-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    
+    .item-details {
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .quantity {
+        min-width: 20px;
+        text-align: center;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+  
+  .total-amount {
+    text-align: right;
+    font-weight: 700;
+    color: #667eea;
+    font-size: 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e6ed;
+  }
+}
+
+.pricing-card {
+  .price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .item-name {
+      color: #555;
+    }
+    
+    .item-price {
+      color: #667eea;
+      font-weight: 600;
+    }
+  }
+  
+  .price-note {
+    color: #999;
+    font-style: italic;
+    margin-top: 16px;
+    text-align: center;
+  }
+}
+
+.submit-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 16px;
+  border-top: 1px solid #e0e6ed;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  
+  .submit-button {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+  
+  .submit-note {
+    color: #666;
+    text-align: center;
+    font-style: italic;
+  }
+}
+
+// Custom Toast Styles
+.custom-toast {
+  position: fixed;
+  top: 80px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideInDown 0.3s ease-out;
+  
+  &.success {
+    background: linear-gradient(45deg, #4caf50, #45a049);
+    color: white;
+  }
+  
+  &.error {
+    background: linear-gradient(45deg, #f44336, #e53935);
+    color: white;
+  }
+  
+  .toast-message {
+    color: white !important;
+    font-weight: 500;
+    text-align: center;
+    font-size: 14px;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Legacy styles for compatibility
+.page {
+  padding: 16px 16px 96px 16px;
+  overflow-x: hidden !important; // Prevent horizontal scroll
+  
+  // Hide scrollbar for all pages
+  &::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    display: none !important;
+  }
+  
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  
+  // For register page, add top padding for header
+  &.register-page {
+    padding-top: 76px; // Extra space for header
+  }
+}
+
+.section-container {
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.zaui-list-item {
+  cursor: pointer;
+}
+
+.clothing-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.price-display {
+  font-weight: 600;
+  color: #007aff;
+}
+
