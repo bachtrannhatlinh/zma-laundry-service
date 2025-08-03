@@ -44,11 +44,18 @@ const Orders = () => {
 
   const handleUpdateStatus = async (newStatus) => {
     try {
-      console.log('Updating order ID:', selectedOrder._id);
+      console.log('=== DEBUG INFO ===');
+      console.log('Selected Order:', selectedOrder);
+      console.log('Order ID:', selectedOrder._id);
       console.log('New status:', newStatus);
-      console.log('Request URL:', `/orders/${selectedOrder._id}/status`);
       
-      const response = await adminService.updateOrderStatus(selectedOrder._id, newStatus);
+      // Test với hardcode order ID để debug
+      const testOrderId = selectedOrder._id || '688f29756c7afcb3173e1631';
+      console.log('Test Order ID:', testOrderId);
+      console.log('Full API URL will be:', `${process.env.REACT_APP_API_URL || '/api'}/orders/${testOrderId}/status`);
+      console.log('==================');
+      
+      const response = await adminService.updateOrderStatus(testOrderId, newStatus);
       console.log('Response:', response);
       
       message.success('Cập nhật trạng thái thành công');
@@ -57,6 +64,8 @@ const Orders = () => {
     } catch (error) {
       console.error('Update error:', error);
       console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
       message.error(`Lỗi: ${error.response?.data?.message || error.message}`);
     }
   };
@@ -65,9 +74,10 @@ const Orders = () => {
     const statusColors = {
       pending: 'orange',
       confirmed: 'blue',
-      processing: 'purple',
+      picked_up: 'purple',
+      washing: 'blue',
       ready: 'cyan',
-      completed: 'green',
+      delivered: 'green',
       cancelled: 'red'
     };
     return statusColors[status] || 'default';
@@ -76,10 +86,11 @@ const Orders = () => {
   const getStatusText = (status) => {
     const statusTexts = {
       pending: 'Chờ xác nhận',
-      confirmed: 'Đã xác nhận',
-      processing: 'Đang xử lý',
+      confirmed: 'Đã xác nhận', 
+      picked_up: 'Đã nhận đồ',
+      washing: 'Đang giặt',
       ready: 'Sẵn sàng',
-      completed: 'Hoàn thành',
+      delivered: 'Đã giao',
       cancelled: 'Đã hủy'
     };
     return statusTexts[status] || status;
@@ -163,9 +174,10 @@ const Orders = () => {
           >
             <Option value="pending">Chờ xác nhận</Option>
             <Option value="confirmed">Đã xác nhận</Option>
-            <Option value="processing">Đang xử lý</Option>
+            <Option value="picked_up">Đã nhận đồ</Option>
+            <Option value="washing">Đang giặt</Option>
             <Option value="ready">Sẵn sàng</Option>
-            <Option value="completed">Hoàn thành</Option>
+            <Option value="delivered">Đã giao</Option>
             <Option value="cancelled">Đã hủy</Option>
           </Select>
         </Space>
@@ -204,6 +216,9 @@ const Orders = () => {
             <div style={{ marginTop: 16 }}>
               <p><strong>Chọn trạng thái mới:</strong></p>
               <Space wrap>
+                <Button onClick={() => handleUpdateStatus('pending')}>
+                  Chờ xác nhận
+                </Button>
                 <Button onClick={() => handleUpdateStatus('confirmed')}>
                   Xác nhận
                 </Button>
@@ -232,6 +247,8 @@ const Orders = () => {
 };
 
 export default Orders;
+
+
 
 
 

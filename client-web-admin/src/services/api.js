@@ -47,8 +47,20 @@ const adminService = {
   },
 
   updateOrderStatus: async (orderId, status) => {
-    console.log('API call - Order ID:', orderId, 'Status:', status);
-    console.log('Request body:', { status });
+    console.log('Sending request:', {
+      url: `/orders/${orderId}/status`,
+      method: 'PUT',
+      body: { status },
+      orderId,
+      status
+    });
+    
+    // Validate status client-side first
+    const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'delivered', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      throw new Error(`Status không hợp lệ: ${status}. Valid statuses: ${validStatuses.join(', ')}`);
+    }
+    
     return await api.put(`/orders/${orderId}/status`, { status });
   },
 
@@ -71,6 +83,7 @@ const adminService = {
 };
 
 export default adminService;
+
 
 
 
