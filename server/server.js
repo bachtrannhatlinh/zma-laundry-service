@@ -18,6 +18,8 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: [
     process.env.CORS_ORIGIN || 'http://localhost:3000',
+    'http://localhost:3000',
+    'http://localhost:4000',
     'https://btnlaundry-service.vercel.app',
     'https://zalo.me',
     'https://*.zalo.me',
