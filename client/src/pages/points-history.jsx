@@ -10,6 +10,7 @@ function PointsHistoryPage() {
   const [error, setError] = useState(null);
 
   const fetchPointsHistory = async () => {
+    
     if (!phoneNumber || phoneNumber.length < 10) {
       setError("Vui lòng nhập số điện thoại hợp lệ");
       return;
@@ -21,6 +22,7 @@ function PointsHistoryPage() {
       const data = await laundryService.getCustomerPoints(phoneNumber);
       setPointsData(data);
     } catch (err) {
+      console.error('API error:', err);
       setError(err.message);
       setPointsData(null);
     } finally {
@@ -29,7 +31,9 @@ function PointsHistoryPage() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     fetchPointsHistory();
   };
 
@@ -81,9 +85,10 @@ function PointsHistoryPage() {
           <Button
             fullWidth
             variant="primary"
-            type="submit"
+            htmlType="submit"
             disabled={loading}
             className="search-button"
+            onClick={handleSubmit}
           >
             {loading ? (
               <>
