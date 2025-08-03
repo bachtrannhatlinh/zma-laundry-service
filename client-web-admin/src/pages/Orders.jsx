@@ -80,13 +80,13 @@ const Orders = () => {
   const columns = [
     {
       title: 'Mã đơn hàng',
-      dataIndex: 'orderNumber',
-      key: 'orderNumber',
+      dataIndex: 'orderId',
+      key: 'orderId',
     },
     {
       title: 'Khách hàng',
-      dataIndex: 'customerName',
-      key: 'customerName',
+      dataIndex: 'fullName',
+      key: 'fullName',
     },
     {
       title: 'Số điện thoại',
@@ -185,8 +185,8 @@ const Orders = () => {
       >
         {selectedOrder && (
           <div>
-            <p><strong>Mã đơn hàng:</strong> {selectedOrder.orderNumber}</p>
-            <p><strong>Khách hàng:</strong> {selectedOrder.customerName}</p>
+            <p><strong>Mã đơn hàng:</strong> {selectedOrder.orderId}</p>
+            <p><strong>Khách hàng:</strong> {selectedOrder.fullName}</p>
             <p><strong>Trạng thái hiện tại:</strong> 
               <Tag color={getStatusColor(selectedOrder.status)} style={{ marginLeft: 8 }}>
                 {getStatusText(selectedOrder.status)}
@@ -199,14 +199,17 @@ const Orders = () => {
                 <Button onClick={() => handleUpdateStatus('confirmed')}>
                   Xác nhận
                 </Button>
-                <Button onClick={() => handleUpdateStatus('processing')}>
-                  Đang xử lý
+                <Button onClick={() => handleUpdateStatus('picked_up')}>
+                  Đã nhận đồ
+                </Button>
+                <Button onClick={() => handleUpdateStatus('washing')}>
+                  Đang giặt
                 </Button>
                 <Button onClick={() => handleUpdateStatus('ready')}>
                   Sẵn sàng
                 </Button>
-                <Button onClick={() => handleUpdateStatus('completed')}>
-                  Hoàn thành
+                <Button onClick={() => handleUpdateStatus('delivered')}>
+                  Đã giao
                 </Button>
                 <Button danger onClick={() => handleUpdateStatus('cancelled')}>
                   Hủy đơn
@@ -221,4 +224,6 @@ const Orders = () => {
 };
 
 export default Orders;
+
+
 

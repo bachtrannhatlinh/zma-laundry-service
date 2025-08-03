@@ -143,8 +143,8 @@ router.post('/', orderValidation, async (req, res) => {
   }
 });
 
-// PATCH /api/orders/:id - Cập nhật trạng thái đơn hàng
-router.patch('/:id', async (req, res) => {
+// PUT /api/orders/:id/status - Cập nhật trạng thái đơn hàng
+router.put('/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'delivered', 'cancelled'];
@@ -186,7 +186,6 @@ router.patch('/:id', async (req, res) => {
         }
       } catch (pointsError) {
         console.error('Failed to add points:', pointsError);
-        // Không throw error để không ảnh hưởng đến việc cập nhật đơn hàng
       }
     }
 
