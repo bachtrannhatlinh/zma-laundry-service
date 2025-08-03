@@ -47,6 +47,8 @@ const adminService = {
   },
 
   updateOrderStatus: async (orderId, status) => {
+    console.log('API call - Order ID:', orderId, 'Status:', status);
+    console.log('Request body:', { status });
     return await api.put(`/orders/${orderId}/status`, { status });
   },
 
@@ -69,6 +71,7 @@ const adminService = {
 };
 
 export default adminService;
+
 
 
 

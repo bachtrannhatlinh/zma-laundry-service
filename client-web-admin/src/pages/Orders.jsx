@@ -44,12 +44,20 @@ const Orders = () => {
 
   const handleUpdateStatus = async (newStatus) => {
     try {
-      await adminService.updateOrderStatus(selectedOrder._id, newStatus);
+      console.log('Updating order ID:', selectedOrder._id);
+      console.log('New status:', newStatus);
+      console.log('Request URL:', `/orders/${selectedOrder._id}/status`);
+      
+      const response = await adminService.updateOrderStatus(selectedOrder._id, newStatus);
+      console.log('Response:', response);
+      
       message.success('Cập nhật trạng thái thành công');
       setStatusModalVisible(false);
       fetchOrders();
     } catch (error) {
-      message.error('Lỗi khi cập nhật trạng thái');
+      console.error('Update error:', error);
+      console.error('Error response:', error.response?.data);
+      message.error(`Lỗi: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -224,6 +232,7 @@ const Orders = () => {
 };
 
 export default Orders;
+
 
 
 
