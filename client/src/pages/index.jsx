@@ -1,17 +1,13 @@
-import { openMiniApp } from "zmp-sdk";
 import { Box, Button, Icon, Page, Text, Grid } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 
-import Clock from "../components/clock";
-import Logo from "../components/logo";
-import bg from "../static/bg.svg";
 import banner from "../static/image/banner.png";
 
 function HomePage() {
   const navigate = useNavigate();
 
   const services = [
-    { icon: "zi-more-grid-2", title: "Giặt thường", desc: "Giặt sạch quần áo hàng ngày" },
+    { icon: "zi-calendar", title: "Giặt thường", desc: "Giặt sạch quần áo hàng ngày" },
     { icon: "zi-clock-1", title: "Giặt nhanh", desc: "Dịch vụ trong 24h" },
     { icon: "zi-star", title: "Giặt cao cấp", desc: "Chăm sóc đồ đắt tiền" },
     { icon: "zi-home", title: "Nhận tại nhà", desc: "Miễn phí nhận và giao" }
@@ -31,8 +27,8 @@ function HomePage() {
         <Text.Title size="large" className="section-title">Dịch vụ của chúng tôi</Text.Title>
         <Grid cols={1} gap={12}>
           {services.map((service, index) => (
-            <Box key={index} className="service-card service-item-row">
-              <Icon icon={service.icon} size={28} className="service-icon" />
+            <Box key={index} className="service-card">
+              <Icon icon={service.icon} size={32} className="service-icon" />
               <Box className="service-content">
                 <Text.Title size="small" className="service-title">{service.title}</Text.Title>
                 <Text size="xSmall" className="service-desc">{service.desc}</Text>
@@ -43,11 +39,11 @@ function HomePage() {
 
         {/* Points History Link */}
         <Box 
-          className="service-card service-item-row points-link" 
+          className="service-card points-link" 
           onClick={() => navigate("/points-history")}
           style={{ marginTop: '16px', cursor: 'pointer' }}
         >
-          <Icon icon="zi-star" size={28} className="service-icon" style={{ color: '#ffd700' }} />
+          <Icon icon="zi-star" size={32} className="service-icon" style={{ color: '#ffd700' }} />
           <Box className="service-content">
             <Text.Title size="small" className="service-title">Tích điểm thưởng</Text.Title>
             <Text size="xSmall" className="service-desc">Xem lịch sử điểm & ưu đãi</Text>
