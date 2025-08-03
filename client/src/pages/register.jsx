@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Button, Input, Page, Text, Header, Icon, Grid, useNavigate } from "zmp-ui";
 import { laundryService } from "../services/api";
 
@@ -26,6 +26,15 @@ function RegisterPage() {
     address: ""
   });
 
+  // Tự động tạo mã đơn hàng khi component mount
+  useEffect(() => {
+    const autoOrderId = generateOrderId();
+    setFormData(prev => ({
+      ...prev,
+      orderId: autoOrderId
+    }));
+  }, []);
+
   const [clothingTypes] = useState([
     { value: "shirt", label: "Áo sơ mi", price: 15000, icon: "zi-more-grid-2" },
     { value: "pants", label: "Quần dài", price: 20000, icon: "zi-more-grid-2" },
@@ -43,7 +52,7 @@ function RegisterPage() {
   const generateOrderId = () => {
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    return `BTN${timestamp}${random}`;
+    return `BTNL${timestamp}${random}`;
   };
 
   const addClothingItem = (type) => {
@@ -233,18 +242,21 @@ function RegisterPage() {
           Chọn loại đồ giặt
         </Text.Title>
         
-        <Grid cols={2} gap={8}>
-          {clothingTypes.map((item) => (
-            <Box 
-              key={item.value}
-              className="clothing-item-card"
-              onClick={() => addClothingItem(item.value)}
-            >
-              <Icon icon={item.icon} />
-              <Text size="small" className="item-name">{item.label}</Text>
-              <Text size="xSmall" className="item-price">{item.price.toLocaleString()}đ</Text>
-            </Box>
-          ))}
+        <Grid cols={2} gap={16}>
+          {clothingTypes.map((item) => {
+            const isSelected = formData.clothingItems.some(selectedItem => selectedItem.type === item.value);
+            return (
+              <Box 
+                key={item.value}
+                className={`clothing-item-card ${isSelected ? 'selected' : ''}`}
+                onClick={() => addClothingItem(item.value)}
+              >
+                <Icon icon={item.icon} />
+                <Text size="small" className="item-name">{item.label}</Text>
+                <Text size="xSmall" className="item-price">{item.price.toLocaleString()}đ</Text>
+              </Box>
+            );
+          })}
         </Grid>
 
         {/* Selected Items */}
@@ -301,21 +313,12 @@ function RegisterPage() {
 
         <Box className="form-group">
           <Text className="form-label">Mã đơn hàng</Text>
-          <Box className="order-id-group">
-            <Input
-              placeholder="Tự động sinh mã"
-              value={formData.orderId}
-              onChange={(e) => setFormData({...formData, orderId: e.target.value})}
-              className="order-id-input"
-            />
-            <Button
-              size="small"
-              variant="secondary"
-              onClick={() => setFormData({...formData, orderId: generateOrderId()})}
-            >
-              Tạo mã
-            </Button>
-          </Box>
+          <Input
+            placeholder="Mã tự động"
+            value={formData.orderId}
+            readOnly
+            className="form-input order-id-readonly"
+          />
         </Box>
 
         <Box className="form-group">
@@ -356,13 +359,20 @@ function RegisterPage() {
           Bảng giá tham khảo
         </Text.Title>
         
-        <Grid cols={1} gap={8}>
-          {clothingTypes.map((item) => (
-            <Box key={item.value} className="price-item">
-              <Text className="item-name">{item.label}</Text>
-              <Text className="item-price">{item.price.toLocaleString()}đ</Text>
-            </Box>
-          ))}
+        <Grid cols={1} gap={12}>
+          {clothingTypes.map((item) => {
+            const isSelected = formData.clothingItems.some(selectedItem => selectedItem.type === item.value);
+            return (
+              <Box 
+                key={item.value} 
+                className={`price-item ${isSelected ? 'selected' : ''}`}
+                onClick={() => addClothingItem(item.value)}
+              >
+                <Text className="item-name">{item.label}</Text>
+                <Text className="item-price">{item.price.toLocaleString()}đ</Text>
+              </Box>
+            );
+          })}
         </Grid>
         
         <Text size="xSmall" className="price-note">

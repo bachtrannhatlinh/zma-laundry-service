@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Clock from "../components/clock";
 import Logo from "../components/logo";
 import bg from "../static/bg.svg";
+import banner from "../static/image/banner.png";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -20,12 +21,8 @@ function HomePage() {
     <Page className="homepage">
       {/* Header Section */}
       <Box className="hero-section">
-        <Box textAlign="center" className="hero-content">
-          <Icon icon="zi-more-grid-2" size={48} className="hero-icon" />
-          <Text.Title size="xLarge" className="hero-title">BTNLaundry Service</Text.Title>
-          <Text className="hero-subtitle">Dịch vụ giặt là chuyên nghiệp</Text>
-          <Text className="hero-subtitle">Chất lượng cao - Giá cả hợp lý</Text>
-          <Clock />
+        <Box className="hero-banner">
+          <img src={banner} alt="BTN Laundry Service Banner" className="banner-image" />
         </Box>
       </Box>
 
@@ -73,10 +70,10 @@ function HomePage() {
       {/* Footer Info */}
       <Box className="footer-info">
         <Text size="xSmall" className="contact-info">
-          📞 Hotline: 0123 456 789
+          📞 Hotline: 0969897468
         </Text>
         <Text size="xSmall" className="contact-info">
-          📍 Phục vụ toàn TP.HCM
+          📍 Phục vụ toàn Đà Nẵng
         </Text>
       </Box>
 

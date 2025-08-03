@@ -18,8 +18,15 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: [
     process.env.CORS_ORIGIN || 'http://localhost:3000',
-    'https://btnlaundry-dz5y3k82v-bachtrannhatlinhs-projects.vercel.app',
-    'https://btnlaundry-api.vercel.app'
+    'https://btnlaundry-service.vercel.app',
+    'https://zalo.me',
+    'https://*.zalo.me',
+    'https://chat.zalo.me',
+    'https://miniapp.zalo.me',
+    'https://h5.zdn.vn',
+    'https://*.zalopay.vn',
+    'https://*.zalopay.com.vn',
+    '*'
   ],
   credentials: true
 }));

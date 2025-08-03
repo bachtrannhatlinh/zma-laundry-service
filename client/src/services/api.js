@@ -1,10 +1,13 @@
 // API service cho dịch vụ giặt là
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://btnlaundry-service.vercel.app/api';
 
 export const laundryService = {
   // Tạo đơn hàng mới
   createOrder: async (orderData) => {
     try {
+      console.log('Creating order with data:', orderData);
+      console.log('API URL:', `${API_BASE_URL}/orders`);
+      
       const response = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: {
@@ -13,12 +16,18 @@ export const laundryService = {
         body: JSON.stringify(orderData),
       });
       
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('API Error:', errorData);
         throw new Error(errorData.message || 'Failed to create order');
       }
       
-      return await response.json();
+      const result = await response.json();
+      console.log('Order created successfully:', result);
+      return result;
     } catch (error) {
       console.error('Error creating order:', error);
       throw error;
