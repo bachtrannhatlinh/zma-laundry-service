@@ -90,8 +90,27 @@ router.post('/', orderValidation, async (req, res) => {
     // Update or create customer
     let customer = await Customer.findOne({ phoneNumber });
     if (customer) {
+      // Cập nhật thông tin customer nếu có thay đổi
+      let hasUpdates = false;
+      
+      if (customer.fullName !== fullName) {
+        customer.fullName = fullName;
+        hasUpdates = true;
+      }
+      
+      if (customer.address !== address && address) {
+        customer.address = address;
+        hasUpdates = true;
+      }
+      
+      // Thêm order ID vào danh sách
       customer.orders.push(savedOrder._id);
+      
       await customer.save();
+      
+      if (hasUpdates) {
+        console.log(`Updated customer info for ${phoneNumber}: name=${fullName}, address=${address}`);
+      }
     } else {
       customer = new Customer({
         fullName,
@@ -100,6 +119,7 @@ router.post('/', orderValidation, async (req, res) => {
         orders: [savedOrder._id]
       });
       await customer.save();
+      console.log(`Created new customer: ${phoneNumber}`);
     }
 
     // Gửi ZNS xác nhận đơn hàng
