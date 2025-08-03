@@ -106,5 +106,64 @@ export const laundryService = {
       console.error('Error fetching customer:', error);
       throw error;
     }
+  },
+
+  // Lấy thông tin điểm thưởng của khách hàng
+  getCustomerPoints: async (phoneNumber) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/customers/${phoneNumber}/points`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch customer points');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching customer points:', error);
+      throw error;
+    }
+  },
+
+  // Tính toán điểm sẽ nhận được từ đơn hàng
+  estimatePoints: async (phoneNumber, orderAmount) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/customers/${phoneNumber}/points/estimate/${orderAmount}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to estimate points');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error estimating points:', error);
+      throw error;
+    }
+  },
+
+  // Sử dụng điểm thưởng
+  usePoints: async (phoneNumber, points, orderId, description) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/customers/${phoneNumber}/points/use`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          points,
+          orderId,
+          description
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to use points');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error using points:', error);
+      throw error;
+    }
   }
 };

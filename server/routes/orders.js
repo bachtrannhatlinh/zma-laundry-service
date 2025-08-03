@@ -143,6 +143,33 @@ router.patch('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
     }
 
+    // Tích điểm khi đơn hàng hoàn thành (delivered)
+    if (status === 'delivered') {
+      try {
+        const customer = await Customer.findOne({ phoneNumber: order.phoneNumber });
+        if (customer) {
+          const pointsEarned = customer.addPoints(
+            order.orderId, 
+            order.totalAmount, 
+            `Hoàn thành đơn hàng ${order.orderId}`
+          );
+          await customer.save();
+          
+          console.log(`Customer ${customer.phoneNumber} earned ${pointsEarned} points from order ${order.orderId}`);
+          
+          // Gửi ZNS thông báo tích điểm
+          try {
+            await znsService.sendPointsEarned(order, pointsEarned, customer.loyaltyPoints);
+          } catch (znsError) {
+            console.error('Failed to send points earned ZNS:', znsError);
+          }
+        }
+      } catch (pointsError) {
+        console.error('Failed to add points:', pointsError);
+        // Không throw error để không ảnh hưởng đến việc cập nhật đơn hàng
+      }
+    }
+
     // Gửi ZNS thông báo cập nhật trạng thái
     try {
       if (status === 'ready') {

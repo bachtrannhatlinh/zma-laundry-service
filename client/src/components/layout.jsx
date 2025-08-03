@@ -9,6 +9,7 @@ import {
 
 import HomePage from "../pages/index";
 import RegisterPage from "../pages/register";
+import PointsHistoryPage from "../pages/points-history";
 
 const Layout = () => {
   return (
@@ -18,6 +19,7 @@ const Layout = () => {
           <AnimationRoutes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/register" element={<RegisterPage />}></Route>
+            <Route path="/points-history" element={<PointsHistoryPage />}></Route>
           </AnimationRoutes>
         </ZMPRouter>
       </SnackbarProvider>

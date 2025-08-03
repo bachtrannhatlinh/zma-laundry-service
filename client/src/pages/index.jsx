@@ -38,6 +38,17 @@ function HomePage() {
             </Box>
           ))}
         </Grid>
+
+        {/* Points History Link */}
+        <Box 
+          className="service-card points-link" 
+          onClick={() => navigate("/points-history")}
+          style={{ marginTop: '16px', cursor: 'pointer' }}
+        >
+          <Icon icon="zi-star" size={32} className="service-icon" style={{ color: '#ffd700' }} />
+          <Text.Title size="small" className="service-title">Tích điểm thưởng</Text.Title>
+          <Text size="xSmall" className="service-desc">Xem lịch sử điểm & ưu đãi</Text>
+        </Box>
       </Box>
 
       {/* Features Section */}

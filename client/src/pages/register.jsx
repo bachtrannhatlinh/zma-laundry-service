@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, Button, Input, Page, Text, Header, Icon, Grid, useNavigate } from "zmp-ui";
 import { laundryService } from "../services/api";
+import PointsInfo from "../components/points";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -207,6 +208,15 @@ function RegisterPage() {
             className="form-input"
           />
         </Box>
+
+        {/* Points Info Component */}
+        {formData.phoneNumber && formData.phoneNumber.length >= 10 && (
+          <PointsInfo 
+            phoneNumber={formData.phoneNumber}
+            orderAmount={formData.clothingItems.reduce((total, item) => total + (item.price * item.quantity), 0)}
+            showEstimate={formData.clothingItems.length > 0}
+          />
+        )}
       </Box>
 
       {/* Service Type Section */}

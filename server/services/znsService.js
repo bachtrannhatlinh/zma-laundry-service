@@ -71,6 +71,28 @@ class ZNSService {
     }
   }
 
+  // Gửi thông báo tích điểm
+  async sendPointsEarned(orderData, pointsEarned, totalPoints) {
+    try {
+      const templateData = {
+        phone: orderData.phoneNumber,
+        template_id: process.env.ZNS_POINTS_EARNED_TEMPLATE_ID,
+        template_data: {
+          customer_name: orderData.fullName,
+          order_id: orderData.orderId,
+          points_earned: pointsEarned.toString(),
+          total_points: totalPoints.toString(),
+          order_amount: this.formatCurrency(orderData.totalAmount)
+        }
+      };
+
+      return await this.sendZNS(templateData);
+    } catch (error) {
+      console.error('Error sending points earned notification:', error);
+      throw error;
+    }
+  }
+
   // Hàm chính gửi ZNS
   async sendZNS(templateData) {
     try {
