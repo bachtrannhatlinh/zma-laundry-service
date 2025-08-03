@@ -113,6 +113,8 @@ const Customers = () => {
     },
   ];
 
+  console.log(selectedCustomer.loyaltyPoints, 'selectedCustomer.loyaltyPoints')
+
   return (
     <div>
       <Card title="Quản lý khách hàng">

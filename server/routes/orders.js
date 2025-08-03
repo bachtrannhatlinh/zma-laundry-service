@@ -219,6 +219,84 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
+// POST /api/orders/backfill-points - Tích điểm ngược cho các đơn hàng đã completed
+router.post('/backfill-points', async (req, res) => {
+  try {
+    // Tìm tất cả đơn hàng completed
+    const completedOrders = await Order.find({ status: 'completed' });
+    
+    let processedCount = 0;
+    let errorCount = 0;
+    const results = [];
+
+    for (const order of completedOrders) {
+      try {
+        const customer = await Customer.findOne({ phoneNumber: order.phoneNumber });
+        if (customer) {
+          // Kiểm tra xem đã tích điểm cho đơn hàng này chưa
+          const existingPoints = customer.pointsHistory.find(p => p.orderId === order.orderId);
+          
+          if (!existingPoints) {
+            console.log(`Processing order ${order.orderId} for customer ${customer.phoneNumber}`);
+            
+            const pointsEarned = customer.addPoints(
+              order.orderId, 
+              order.totalAmount, 
+              `Hoàn thành đơn hàng ${order.orderId} (Backfill)`
+            );
+            await customer.save();
+            
+            results.push({
+              orderId: order.orderId,
+              customerPhone: order.phoneNumber,
+              pointsEarned: pointsEarned,
+              totalAmount: order.totalAmount,
+              status: 'success'
+            });
+            processedCount++;
+            console.log(`✅ Added ${pointsEarned} points for order ${order.orderId}`);
+          } else {
+            results.push({
+              orderId: order.orderId,
+              customerPhone: order.phoneNumber,
+              status: 'already_processed'
+            });
+            console.log(`⚠️ Order ${order.orderId} already has points`);
+          }
+        } else {
+          results.push({
+            orderId: order.orderId,
+            customerPhone: order.phoneNumber,
+            status: 'customer_not_found'
+          });
+          errorCount++;
+          console.log(`❌ Customer not found for order ${order.orderId}`);
+        }
+      } catch (orderError) {
+        results.push({
+          orderId: order.orderId,
+          customerPhone: order.phoneNumber,
+          status: 'error',
+          error: orderError.message
+        });
+        errorCount++;
+        console.error(`Error processing order ${order.orderId}:`, orderError);
+      }
+    }
+
+    res.json({
+      message: 'Backfill points completed',
+      totalOrders: completedOrders.length,
+      processedCount,
+      errorCount,
+      results
+    });
+  } catch (error) {
+    console.error('Backfill points error:', error);
+    res.status(500).json({ message: 'Lỗi server', error: error.message });
+  }
+});
+
 // DELETE /api/orders/:id - Xóa đơn hàng
 router.delete('/:id', async (req, res) => {
   try {

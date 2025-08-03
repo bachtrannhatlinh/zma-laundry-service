@@ -64,6 +64,11 @@ const adminService = {
     return await api.put(`/orders/${orderId}/status`, { status });
   },
 
+  deleteOrder: async (orderId) => {
+    console.log('Deleting order:', orderId);
+    return await api.delete(`/orders/${orderId}`);
+  },
+
   // Customers
   getCustomers: async (params = {}) => {
     return await api.get('/customers', { params });
@@ -80,6 +85,11 @@ const adminService = {
   updateCustomerPoints: async (phoneNumber, points, description) => {
     console.log('Updating customer points:', { phoneNumber, points, description });
     return await api.post(`/customers/${phoneNumber}/points`, { points, description });
+  },
+
+  resetCustomerPoints: async (phoneNumber) => {
+    console.log('Resetting customer points:', phoneNumber);
+    return await api.post(`/customers/${phoneNumber}/points/reset`);
   },
 };
 

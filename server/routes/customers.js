@@ -69,6 +69,39 @@ router.get('/:phone/points', async (req, res) => {
   }
 });
 
+// POST /api/customers/:phone/points/reset - Reset điểm về 0
+router.post('/:phone/points/reset', async (req, res) => {
+  try {
+    const customer = await Customer.findOne({ phoneNumber: req.params.phone });
+    
+    if (!customer) {
+      return res.status(404).json({ message: 'Không tìm thấy khách hàng' });
+    }
+
+    // Reset điểm và lịch sử
+    customer.loyaltyPoints = 0;
+    customer.totalSpent = 0;
+    customer.memberLevel = 'Bronze';
+    customer.pointsHistory = [];
+    customer.orders = []; // Xóa luôn danh sách đơn hàng
+
+    await customer.save();
+
+    res.json({
+      message: 'Reset điểm thành công',
+      customer: {
+        phoneNumber: customer.phoneNumber,
+        fullName: customer.fullName,
+        loyaltyPoints: customer.loyaltyPoints,
+        totalSpent: customer.totalSpent,
+        memberLevel: customer.memberLevel
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi server', error: error.message });
+  }
+});
+
 // POST /api/customers/:phone/points - Cập nhật điểm thủ công
 router.post('/:phone/points', async (req, res) => {
   try {
