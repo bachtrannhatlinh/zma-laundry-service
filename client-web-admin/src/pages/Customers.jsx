@@ -74,8 +74,8 @@ const Customers = () => {
     },
     {
       title: 'Điểm hiện tại',
-      dataIndex: 'points',
-      key: 'points',
+      dataIndex: 'loyaltyPoints',
+      key: 'loyaltyPoints',
       render: (points) => (
         <Tag color="gold" icon={<StarOutlined />}>
           {points || 0} điểm
@@ -156,7 +156,7 @@ const Customers = () => {
             onFinish={handleUpdatePoints}
           >
             <p><strong>Khách hàng:</strong> {selectedCustomer.fullName}</p>
-            <p><strong>Điểm hiện tại:</strong> {selectedCustomer.points || 0} điểm</p>
+            <p><strong>Điểm hiện tại:</strong> {selectedCustomer.loyaltyPoints || 0} điểm</p>
             
             <Form.Item
               name="points"

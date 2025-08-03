@@ -77,8 +77,9 @@ const adminService = {
     return await api.get(`/customers/${phoneNumber}/points`);
   },
 
-  updateCustomerPoints: async (phoneNumber, pointsData) => {
-    return await api.post(`/customers/${phoneNumber}/points`, pointsData);
+  updateCustomerPoints: async (phoneNumber, points, description) => {
+    console.log('Updating customer points:', { phoneNumber, points, description });
+    return await api.post(`/customers/${phoneNumber}/points`, { points, description });
   },
 };
 

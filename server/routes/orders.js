@@ -166,8 +166,13 @@ router.put('/:id/status', async (req, res) => {
     // Tích điểm khi đơn hàng hoàn thành (completed)
     if (status === 'completed') {
       try {
+        console.log(`=== POINTS PROCESSING START ===`);
+        console.log(`Order ID: ${order._id}, Phone: ${order.phoneNumber}, Amount: ${order.totalAmount}`);
+        
         const customer = await Customer.findOne({ phoneNumber: order.phoneNumber });
         if (customer) {
+          console.log(`Customer found: ${customer.fullName}, Current points: ${customer.loyaltyPoints}`);
+          
           const pointsEarned = customer.addPoints(
             order.orderId, 
             order.totalAmount, 
@@ -176,6 +181,8 @@ router.put('/:id/status', async (req, res) => {
           await customer.save();
           
           console.log(`Customer ${customer.phoneNumber} earned ${pointsEarned} points from order ${order.orderId}`);
+          console.log(`New points balance: ${customer.loyaltyPoints}`);
+          console.log(`=== POINTS PROCESSING END ===`);
           
           // Gửi ZNS thông báo tích điểm
           try {
@@ -183,6 +190,8 @@ router.put('/:id/status', async (req, res) => {
           } catch (znsError) {
             console.error('Failed to send points earned ZNS:', znsError);
           }
+        } else {
+          console.log(`Customer not found for phone: ${order.phoneNumber}`);
         }
       } catch (pointsError) {
         console.error('Failed to add points:', pointsError);
