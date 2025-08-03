@@ -7,12 +7,30 @@ function RegisterPage() {
   const navigate = useNavigate();
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const [isExistingCustomer, setIsExistingCustomer] = useState(false);
   
   const showCustomToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => {
       setToast({ show: false, message: "", type: "" });
     }, 3000);
+  };
+
+  // Handle customer data callback from PointsInfo
+  const handleCustomerData = (customerData) => {
+    console.log('Customer data received:', customerData);
+    if (customerData && customerData.isExisting) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: customerData.fullName || prev.fullName,
+        address: customerData.address || prev.address
+      }));
+      setIsExistingCustomer(true);
+      console.log('Set existing customer to true');
+    } else {
+      setIsExistingCustomer(false);
+      console.log('Set existing customer to false');
+    }
   };
   
   const [formData, setFormData] = useState({
@@ -180,12 +198,20 @@ function RegisterPage() {
         
         <Box className="form-group">
           <Text className="form-label">Họ tên *</Text>
-          <Input
-            placeholder="Nhập họ tên đầy đủ"
-            value={formData.fullName}
-            onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-            className="form-input"
-          />
+          <Box className={`input-wrapper ${isExistingCustomer ? 'customer-info-filled' : ''}`}>
+            <Input
+              placeholder="Nhập họ tên đầy đủ"
+              value={formData.fullName}
+              onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+              className="form-input"
+            />
+            {isExistingCustomer && <span className="filled-indicator">✓</span>}
+          </Box>
+          {isExistingCustomer && (
+            <Text size="xSmall" className="auto-fill-note">
+              💡 Thông tin đã tự động điền từ database, bạn có thể chỉnh sửa
+            </Text>
+          )}
         </Box>
 
         <Box className="form-group">
@@ -201,12 +227,20 @@ function RegisterPage() {
 
         <Box className="form-group">
           <Text className="form-label">Địa chỉ</Text>
-          <Input
-            placeholder="Nhập địa chỉ nhận/trả đồ"
-            value={formData.address}
-            onChange={(e) => setFormData({...formData, address: e.target.value})}
-            className="form-input"
-          />
+          <Box className={`input-wrapper ${isExistingCustomer ? 'customer-info-filled' : ''}`}>
+            <Input
+              placeholder="Nhập địa chỉ nhận/trả đồ"
+              value={formData.address}
+              onChange={(e) => setFormData({...formData, address: e.target.value})}
+              className="form-input"
+            />
+            {isExistingCustomer && <span className="filled-indicator">✓</span>}
+          </Box>
+          {isExistingCustomer && (
+            <Text size="xSmall" className="auto-fill-note">
+              💡 Địa chỉ đã tự động điền từ database, bạn có thể chỉnh sửa
+            </Text>
+          )}
         </Box>
 
         {/* Points Info Component */}
@@ -215,6 +249,7 @@ function RegisterPage() {
             phoneNumber={formData.phoneNumber}
             orderAmount={formData.clothingItems.reduce((total, item) => total + (item.price * item.quantity), 0)}
             showEstimate={formData.clothingItems.length > 0}
+            onCustomerData={handleCustomerData}
           />
         )}
       </Box>

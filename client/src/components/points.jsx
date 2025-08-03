@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Box, Text, Icon, Spinner } from "zmp-ui";
 import { laundryService } from "../services/api";
 
-function PointsInfo({ phoneNumber, orderAmount = 0, showEstimate = false }) {
+function PointsInfo({ phoneNumber, orderAmount = 0, showEstimate = false, onCustomerData }) {
   const [pointsData, setPointsData] = useState(null);
   const [estimatedPoints, setEstimatedPoints] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -12,6 +12,14 @@ function PointsInfo({ phoneNumber, orderAmount = 0, showEstimate = false }) {
   useEffect(() => {
     if (phoneNumber && phoneNumber.length >= 10) {
       fetchCustomerPoints();
+    } else {
+      // Reset data when phone number is invalid
+      setPointsData(null);
+      setEstimatedPoints(null);
+      setError(null);
+      if (onCustomerData) {
+        onCustomerData(null);
+      }
     }
   }, [phoneNumber]);
 
@@ -28,12 +36,39 @@ function PointsInfo({ phoneNumber, orderAmount = 0, showEstimate = false }) {
       setError(null);
       const data = await laundryService.getCustomerPoints(phoneNumber);
       setPointsData(data);
+      
+      console.log('Customer data from API:', data); // Debug log
+      
+      // Callback với thông tin khách hàng để parent component sử dụng
+      if (onCustomerData) {
+        onCustomerData({
+          fullName: data.fullName,
+          address: data.address || "",
+          isExisting: true
+        });
+      }
     } catch (err) {
       // Nếu customer chưa tồn tại, không hiển thị error
-      if (!err.message.includes('Không tìm thấy khách hàng')) {
+      if (err.message.includes('Không tìm thấy khách hàng')) {
+        setPointsData(null);
+        setError(null);
+        
+        // Callback báo khách hàng mới
+        if (onCustomerData) {
+          onCustomerData({
+            fullName: "",
+            address: "",
+            isExisting: false
+          });
+        }
+      } else {
         setError(err.message);
+        setPointsData(null);
+        
+        if (onCustomerData) {
+          onCustomerData(null);
+        }
       }
-      setPointsData(null);
     } finally {
       setLoading(false);
     }
@@ -81,18 +116,33 @@ function PointsInfo({ phoneNumber, orderAmount = 0, showEstimate = false }) {
 
   if (loading) {
     return (
-      <Box className="points-info loading">
-        <Spinner />
-        <Text size="small">Đang tải thông tin điểm...</Text>
+      <Box className="points-info loading-state">
+        <Box className="loading-header">
+          <Spinner size="small" className="loading-spinner" />
+          <Text.Title size="small" className="loading-title">Đang kiểm tra</Text.Title>
+        </Box>
+        <Text size="small" className="loading-message">
+          Đang tải thông tin điểm thưởng và ưu đãi...
+        </Text>
+        <Box className="loading-dots">
+          <span className="dot"></span>
+          <span className="dot"></span>
+          <span className="dot"></span>
+        </Box>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box className="points-info error">
-        <Icon icon="zi-warning" />
-        <Text size="small" className="error-text">Không thể tải thông tin điểm</Text>
+      <Box className="points-info error-state">
+        <Box className="error-header">
+          <Icon icon="zi-warning" className="error-icon" />
+          <Text.Title size="small" className="error-title">Lỗi kết nối</Text.Title>
+        </Box>
+        <Text size="small" className="error-message">
+          Không thể tải thông tin điểm thưởng. Vui lòng thử lại sau.
+        </Text>
       </Box>
     );
   }

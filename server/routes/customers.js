@@ -55,6 +55,7 @@ router.get('/:phone/points', async (req, res) => {
     const pointsInfo = {
       phoneNumber: customer.phoneNumber,
       fullName: customer.fullName,
+      address: customer.address, // Thêm address vào response
       loyaltyPoints: customer.loyaltyPoints,
       totalSpent: customer.totalSpent,
       memberLevel: customer.memberLevel,

@@ -29,25 +29,29 @@ function HomePage() {
       {/* Services Section */}
       <Box className="services-section">
         <Text.Title size="large" className="section-title">Dịch vụ của chúng tôi</Text.Title>
-        <Grid cols={2} gap={12}>
+        <Grid cols={1} gap={12}>
           {services.map((service, index) => (
-            <Box key={index} className="service-card">
-              <Icon icon={service.icon} size={32} className="service-icon" />
-              <Text.Title size="small" className="service-title">{service.title}</Text.Title>
-              <Text size="xSmall" className="service-desc">{service.desc}</Text>
+            <Box key={index} className="service-card service-item-row">
+              <Icon icon={service.icon} size={28} className="service-icon" />
+              <Box className="service-content">
+                <Text.Title size="small" className="service-title">{service.title}</Text.Title>
+                <Text size="xSmall" className="service-desc">{service.desc}</Text>
+              </Box>
             </Box>
           ))}
         </Grid>
 
         {/* Points History Link */}
         <Box 
-          className="service-card points-link" 
+          className="service-card service-item-row points-link" 
           onClick={() => navigate("/points-history")}
           style={{ marginTop: '16px', cursor: 'pointer' }}
         >
-          <Icon icon="zi-star" size={32} className="service-icon" style={{ color: '#ffd700' }} />
-          <Text.Title size="small" className="service-title">Tích điểm thưởng</Text.Title>
-          <Text size="xSmall" className="service-desc">Xem lịch sử điểm & ưu đãi</Text>
+          <Icon icon="zi-star" size={28} className="service-icon" style={{ color: '#ffd700' }} />
+          <Box className="service-content">
+            <Text.Title size="small" className="service-title">Tích điểm thưởng</Text.Title>
+            <Text size="xSmall" className="service-desc">Xem lịch sử điểm & ưu đãi</Text>
+          </Box>
         </Box>
       </Box>
 
@@ -55,27 +59,39 @@ function HomePage() {
       <Box className="features-section">
         <Text.Title size="medium" className="features-title">Tại sao chọn chúng tôi?</Text.Title>
         
-        <Box className="feature-list">
+        <Grid cols={1} gap={12} className="feature-list">
           <Box className="feature-item">
             <Icon icon="zi-check-circle" className="feature-icon" />
-            <Text className="feature-text">Miễn phí nhận và giao tận nơi</Text>
+            <Box className="feature-content">
+              <Text className="feature-text">Miễn phí nhận và giao tận nơi</Text>
+              <Text size="xSmall" className="feature-desc">Phục vụ trong bán kính 5km</Text>
+            </Box>
           </Box>
           
           <Box className="feature-item">
             <Icon icon="zi-check-circle" className="feature-icon" />
-            <Text className="feature-text">Sử dụng hóa chất an toàn</Text>
+            <Box className="feature-content">
+              <Text className="feature-text">Sử dụng hóa chất an toàn</Text>
+              <Text size="xSmall" className="feature-desc">Không gây hại cho da và môi trường</Text>
+            </Box>
           </Box>
           
           <Box className="feature-item">
             <Icon icon="zi-check-circle" className="feature-icon" />
-            <Text className="feature-text">Giá cả minh bạch, hợp lý</Text>
+            <Box className="feature-content">
+              <Text className="feature-text">Giá cả minh bạch, hợp lý</Text>
+              <Text size="xSmall" className="feature-desc">Không phát sinh chi phí ẩn</Text>
+            </Box>
           </Box>
           
           <Box className="feature-item">
             <Icon icon="zi-check-circle" className="feature-icon" />
-            <Text className="feature-text">Hỗ trợ khách hàng 24/7</Text>
+            <Box className="feature-content">
+              <Text className="feature-text">Hỗ trợ khách hàng 24/7</Text>
+              <Text size="xSmall" className="feature-desc">Luôn sẵn sàng giải đáp thắc mắc</Text>
+            </Box>
           </Box>
-        </Box>
+        </Grid>
       </Box>
 
       {/* Footer Info */}
