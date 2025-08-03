@@ -77,7 +77,7 @@ const Orders = () => {
       picked_up: 'purple',
       washing: 'blue',
       ready: 'cyan',
-      delivered: 'green',
+      completed: 'green',
       cancelled: 'red'
     };
     return statusColors[status] || 'default';
@@ -90,7 +90,7 @@ const Orders = () => {
       picked_up: 'Đã nhận đồ',
       washing: 'Đang giặt',
       ready: 'Sẵn sàng',
-      delivered: 'Đã giao',
+      completed: 'Hoàn thành',
       cancelled: 'Đã hủy'
     };
     return statusTexts[status] || status;
@@ -177,7 +177,7 @@ const Orders = () => {
             <Option value="picked_up">Đã nhận đồ</Option>
             <Option value="washing">Đang giặt</Option>
             <Option value="ready">Sẵn sàng</Option>
-            <Option value="delivered">Đã giao</Option>
+            <Option value="completed">Hoàn thành</Option>
             <Option value="cancelled">Đã hủy</Option>
           </Select>
         </Space>
@@ -231,8 +231,8 @@ const Orders = () => {
                 <Button onClick={() => handleUpdateStatus('ready')}>
                   Sẵn sàng
                 </Button>
-                <Button onClick={() => handleUpdateStatus('delivered')}>
-                  Đã giao
+                <Button onClick={() => handleUpdateStatus('completed')}>
+                  Hoàn thành
                 </Button>
                 <Button danger onClick={() => handleUpdateStatus('cancelled')}>
                   Hủy đơn

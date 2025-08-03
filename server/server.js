@@ -69,6 +69,8 @@ app.use('*', (req, res) => {
       'GET /api/orders',
       'POST /api/orders',
       'GET /api/orders/:id',
+      'PUT /api/orders/:id/status',
+      'DELETE /api/orders/:id',
       'GET /api/customers/:phone',
       'POST /api/zns/test'
     ]

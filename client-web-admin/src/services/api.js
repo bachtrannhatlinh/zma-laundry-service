@@ -56,7 +56,7 @@ const adminService = {
     });
     
     // Validate status client-side first
-    const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'delivered', 'cancelled'];
+    const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'completed', 'cancelled'];
     if (!validStatuses.includes(status)) {
       throw new Error(`Status không hợp lệ: ${status}. Valid statuses: ${validStatuses.join(', ')}`);
     }

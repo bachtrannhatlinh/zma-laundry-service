@@ -152,7 +152,7 @@ class ZNSService {
       'picked_up': 'Đã nhận đồ',
       'washing': 'Đang giặt',
       'ready': 'Sẵn sàng giao',
-      'delivered': 'Đã giao',
+      'completed': 'Hoàn thành',
       'cancelled': 'Đã hủy'
     };
     return statusMap[status] || status;
@@ -164,7 +164,7 @@ class ZNSService {
       'picked_up': '1-2 ngày',
       'washing': '12-24 giờ',
       'ready': 'Sẵn sàng nhận',
-      'delivered': 'Hoàn thành'
+      'completed': 'Hoàn thành'
     };
     return timeMap[status] || '';
   }

@@ -147,7 +147,7 @@ router.post('/', orderValidation, async (req, res) => {
 router.put('/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
-    const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'delivered', 'cancelled'];
+    const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'completed', 'cancelled'];
     
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Trạng thái không hợp lệ' });
@@ -163,8 +163,8 @@ router.put('/:id/status', async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
     }
 
-    // Tích điểm khi đơn hàng hoàn thành (delivered)
-    if (status === 'delivered') {
+    // Tích điểm khi đơn hàng hoàn thành (completed)
+    if (status === 'completed') {
       try {
         const customer = await Customer.findOne({ phoneNumber: order.phoneNumber });
         if (customer) {
