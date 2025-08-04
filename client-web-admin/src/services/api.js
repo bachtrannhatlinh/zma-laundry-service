@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://btnlaundry-service.vercel.app/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -8,11 +8,16 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Request interceptor
+// Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     console.log('API Request:', config.method?.toUpperCase(), config.url);
     return config;
   },
@@ -21,12 +26,41 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor with token refresh
 api.interceptors.response.use(
   (response) => {
     return response.data;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      try {
+        // Try to refresh token
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const refreshResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+            refreshToken
+          });
+          
+          const { accessToken, refreshToken: newRefreshToken } = refreshResponse.data;
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
+          
+          // Retry original request with new token
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        // Refresh failed, redirect to login
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+      }
+    }
+    
     console.error('API Error:', error.response?.data || error.message);
     return Promise.reject(error.response?.data || error);
   }

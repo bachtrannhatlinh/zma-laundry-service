@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
 const znsService = require('../services/znsService');
+const { authenticated, adminOrManager } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -17,8 +18,8 @@ const orderValidation = [
   body('clothingItems.*.price').isFloat({ min: 0 }).withMessage('Giá phải lớn hơn hoặc bằng 0')
 ];
 
-// GET /api/orders - Lấy danh sách đơn hàng
-router.get('/', async (req, res) => {
+// GET /api/orders - Lấy danh sách đơn hàng (Protected - Admin/Manager only)
+router.get('/', adminOrManager, async (req, res) => {
   try {
     const { phone, status, page = 1, limit = 10 } = req.query;
     const query = {};
@@ -44,8 +45,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/orders/:id - Lấy chi tiết đơn hàng
-router.get('/:id', async (req, res) => {
+// GET /api/orders/:id - Lấy chi tiết đơn hàng (Protected - Admin/Manager only)
+router.get('/:id', adminOrManager, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) {
@@ -143,8 +144,8 @@ router.post('/', orderValidation, async (req, res) => {
   }
 });
 
-// PUT /api/orders/:id/status - Cập nhật trạng thái đơn hàng
-router.put('/:id/status', async (req, res) => {
+// PUT /api/orders/:id/status - Cập nhật trạng thái đơn hàng (Protected - Admin/Manager only)
+router.put('/:id/status', adminOrManager, async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'completed', 'cancelled'];
@@ -297,8 +298,8 @@ router.post('/backfill-points', async (req, res) => {
   }
 });
 
-// DELETE /api/orders/:id - Xóa đơn hàng
-router.delete('/:id', async (req, res) => {
+// DELETE /api/orders/:id - Xóa đơn hàng (Protected - Admin/Manager only)
+router.delete('/:id', adminOrManager, async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);
     if (!order) {

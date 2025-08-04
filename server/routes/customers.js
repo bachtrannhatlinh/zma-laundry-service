@@ -1,10 +1,11 @@
 const express = require('express');
 const Customer = require('../models/Customer');
+const { adminOrManager } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/customers - Lấy danh sách khách hàng
-router.get('/', async (req, res) => {
+// GET /api/customers - Lấy danh sách khách hàng (Protected - Admin/Manager only)
+router.get('/', adminOrManager, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     

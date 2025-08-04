@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const orderRoutes = require('./routes/orders');
 const customerRoutes = require('./routes/customers');
 const znsRoutes = require('./routes/zns');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
+app.use(cookieParser());
 app.use(cors({
   origin: [
     process.env.CORS_ORIGIN || 'http://localhost:3000',
@@ -36,6 +39,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/zns', znsRoutes);
@@ -66,6 +70,10 @@ app.use('*', (req, res) => {
     message: 'Route not found',
     availableRoutes: [
       'GET /api/health',
+      'POST /api/auth/login',
+      'POST /api/auth/logout',
+      'GET /api/auth/me',
+      'POST /api/auth/register',
       'GET /api/orders',
       'POST /api/orders',
       'GET /api/orders/:id',

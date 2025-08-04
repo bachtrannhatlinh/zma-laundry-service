@@ -2,7 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import viVN from 'antd/locale/vi_VN';
+import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
@@ -12,17 +15,57 @@ import './App.css';
 function App() {
   return (
     <ConfigProvider locale={viVN}>
-      <Router>
-        <Layout>
+      <AuthProvider>
+        <Router>
           <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected routes */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/points" element={<Points />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/orders" 
+              element={
+                <ProtectedRoute requiredRoles={['admin', 'manager']}>
+                  <Layout>
+                    <Orders />
+                  </Layout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/customers" 
+              element={
+                <ProtectedRoute requiredRoles={['admin', 'manager']}>
+                  <Layout>
+                    <Customers />
+                  </Layout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/points" 
+              element={
+                <ProtectedRoute requiredRoles={['admin', 'manager']}>
+                  <Layout>
+                    <Points />
+                  </Layout>
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
-        </Layout>
-      </Router>
+        </Router>
+      </AuthProvider>
     </ConfigProvider>
   );
 }

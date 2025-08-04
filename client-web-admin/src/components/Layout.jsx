@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, theme } from 'antd';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Space, Typography } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -7,15 +7,20 @@ import {
   ShoppingOutlined,
   UserOutlined,
   StarOutlined,
+  LogoutOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const AppLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -47,6 +52,33 @@ const AppLayout = ({ children }) => {
     navigate(key);
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Thông tin cá nhân',
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: 'Cài đặt',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Đăng xuất',
+      onClick: handleLogout,
+    },
+  ];
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -64,8 +96,11 @@ const AppLayout = ({ children }) => {
       <Layout>
         <Header
           style={{
-            padding: 0,
+            padding: '0 16px',
             background: colorBgContainer,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Button
@@ -78,6 +113,23 @@ const AppLayout = ({ children }) => {
               height: 64,
             }}
           />
+          
+          <Dropdown
+            menu={{ items: userMenuItems }}
+            placement="bottomRight"
+            trigger={['click']}
+          >
+            <Space style={{ cursor: 'pointer' }}>
+              <Avatar size="small" icon={<UserOutlined />} />
+              <Space direction="vertical" size={0}>
+                <Text strong>{user?.fullName || user?.username}</Text>
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {user?.role === 'admin' ? 'Quản trị viên' : 
+                   user?.role === 'manager' ? 'Quản lý' : 'Nhân viên'}
+                </Text>
+              </Space>
+            </Space>
+          </Dropdown>
         </Header>
         <Content
           style={{
