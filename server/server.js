@@ -10,6 +10,7 @@ const orderRoutes = require('./routes/orders');
 const customerRoutes = require('./routes/customers');
 const znsRoutes = require('./routes/zns');
 const authRoutes = require('./routes/auth');
+const debugRoutes = require('./routes/debug');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,22 +19,64 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cookieParser());
+// CORS configuration
+const allowedOrigins = [
+  process.env.CORS_ORIGIN || 'http://localhost:3000',
+  'http://localhost:3000',
+  'http://localhost:4000',
+  'https://btnlaundry-service.vercel.app',
+  // Client web admin domains
+  'https://zma-laundry-admin-p37ccq2sp-bachtrannhatlinhs-projects.vercel.app',
+  'https://zma-laundry-admin-3ualzoibt-bachtrannhatlinhs-projects.vercel.app',
+  'https://zma-laundry-admin.vercel.app',
+  // Zalo domains
+  'https://zalo.me',
+  'https://chat.zalo.me',
+  'https://miniapp.zalo.me',
+  'https://h5.zdn.vn'
+];
+
+// Add environment-specific CORS origins
+if (process.env.CLIENT_DOMAINS) {
+  allowedOrigins.push(...process.env.CLIENT_DOMAINS.split(','));
+}
+
 app.use(cors({
-  origin: [
-    process.env.CORS_ORIGIN || 'http://localhost:3000',
-    'http://localhost:3000',
-    'http://localhost:4000',
-    'https://btnlaundry-service.vercel.app',
-    'https://zalo.me',
-    'https://*.zalo.me',
-    'https://chat.zalo.me',
-    'https://miniapp.zalo.me',
-    'https://h5.zdn.vn',
-    'https://*.zalopay.vn',
-    'https://*.zalopay.com.vn',
-    '*'
-  ],
-  credentials: true
+  origin: function (origin, callback) {
+    console.log('CORS check for origin:', origin);
+    
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) {
+      console.log('No origin - allowing');
+      return callback(null, true);
+    }
+    
+    // Check if origin is allowed
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('Origin found in allowedOrigins - allowing');
+      return callback(null, true);
+    }
+    
+    // Allow all Vercel preview deployments
+    if (origin.includes('.vercel.app') || origin.includes('bachtrannhatlinhs-projects.vercel.app')) {
+      console.log('Vercel deployment detected - allowing');
+      return callback(null, true);
+    }
+    
+    // Allow localhost in development
+    if (process.env.NODE_ENV === 'development' && origin.includes('localhost')) {
+      console.log('Localhost in development - allowing');
+      return callback(null, true);
+    }
+    
+    console.log('CORS blocked origin:', origin);
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -43,6 +86,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/zns', znsRoutes);
+app.use('/api/debug', debugRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -53,6 +97,21 @@ app.get('/api/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0'
   });
+});
+
+// CORS test endpoint
+app.get('/api/cors-test', (req, res) => {
+  res.json({
+    message: 'CORS is working!',
+    origin: req.get('Origin'),
+    userAgent: req.get('User-Agent'),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Simple test endpoint for preflight requests
+app.options('/api/*', (req, res) => {
+  res.status(200).end();
 });
 
 // Error handling middleware
