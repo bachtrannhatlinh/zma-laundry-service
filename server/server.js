@@ -146,17 +146,42 @@ app.use('*', (req, res) => {
 
 // Connect to MongoDB (only if MONGODB_URI is provided)
 if (process.env.MONGODB_URI) {
-  mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
+  const connectDB = async () => {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+        socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+        maxPoolSize: 10, // Maintain up to 10 socket connections
+        bufferMaxEntries: 0, // Disable mongoose buffering
+        bufferCommands: false, // Disable mongoose buffering
+      });
       console.log('Connected to MongoDB');
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error('MongoDB connection error:', error);
-      // Don't exit in production/Vercel
+      // Don't exit in production/Vercel, but log the error
       if (process.env.NODE_ENV !== 'production') {
         process.exit(1);
       }
-    });
+    }
+  };
+  
+  connectDB();
+  
+  // Handle connection events
+  mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to MongoDB');
+  });
+  
+  mongoose.connection.on('error', (err) => {
+    console.error('Mongoose connection error:', err);
+  });
+  
+  mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose disconnected from MongoDB');
+  });
+  
 } else {
   console.log('MongoDB URI not provided, running without database');
 }

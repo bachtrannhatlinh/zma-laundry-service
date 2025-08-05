@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const JWTUtils = require('../utils/jwt');
@@ -28,6 +29,15 @@ router.post('/login', loginValidation, async (req, res) => {
       return res.status(400).json({ 
         message: 'Validation failed', 
         errors: errors.array() 
+      });
+    }
+
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      console.error('Database not connected. Connection state:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        code: 'DATABASE_UNAVAILABLE'
       });
     }
 
