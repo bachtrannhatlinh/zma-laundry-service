@@ -148,18 +148,14 @@ app.use('*', (req, res) => {
 if (process.env.MONGODB_URI) {
   const connectDB = async () => {
     try {
-      // More aggressive connection options for Vercel
+      // Fixed connection options for Vercel
       await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         serverSelectionTimeoutMS: 10000, // 10 seconds timeout
         socketTimeoutMS: 45000, // 45 seconds socket timeout
         connectTimeoutMS: 10000, // 10 seconds connection timeout
         maxPoolSize: 5, // Smaller pool for serverless
         minPoolSize: 1, // Minimum pool size
         maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
-        bufferMaxEntries: 0, // Disable mongoose buffering
-        bufferCommands: false, // Disable mongoose buffering
         heartbeatFrequencyMS: 10000, // Send heartbeat every 10 seconds
         retryWrites: true,
         retryReads: true

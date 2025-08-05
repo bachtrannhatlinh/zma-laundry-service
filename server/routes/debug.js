@@ -32,9 +32,7 @@ router.get('/test-connection', async (req, res) => {
           connectTimeoutMS: 10000,
           socketTimeoutMS: 45000,
           maxPoolSize: 5,
-          minPoolSize: 1,
-          bufferMaxEntries: 0,
-          bufferCommands: false
+          minPoolSize: 1
         });
         
         connectionInfo.manualConnection = 'SUCCESS';
