@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const JWTUtils = require('../utils/jwt');
 const { authenticateToken, adminOnly } = require('../middleware/auth');
+const { FALLBACK_ADMIN, verifyFallbackPassword } = require('../utils/fallbackAuth');
 
 const router = express.Router();
 
@@ -32,18 +33,50 @@ router.post('/login', loginValidation, async (req, res) => {
       });
     }
 
+    const { username, password } = req.body;
+
     // Check database connection
     if (mongoose.connection.readyState !== 1) {
       console.error('Database not connected. Connection state:', mongoose.connection.readyState);
-      return res.status(503).json({ 
-        message: 'Database connection unavailable',
-        code: 'DATABASE_UNAVAILABLE'
+      console.log('Using fallback authentication...');
+      
+      // Use fallback admin user when database is unavailable
+      if ((username === FALLBACK_ADMIN.username || username === FALLBACK_ADMIN.email) && FALLBACK_ADMIN.isActive) {
+        const isPasswordValid = await verifyFallbackPassword(password, FALLBACK_ADMIN.password);
+        
+        if (isPasswordValid) {
+          // Generate tokens for fallback admin
+          const tokens = JWTUtils.generateTokenPair({
+            _id: FALLBACK_ADMIN._id,
+            username: FALLBACK_ADMIN.username,
+            email: FALLBACK_ADMIN.email,
+            role: FALLBACK_ADMIN.role
+          });
+
+          // Set cookies
+          res.cookie('accessToken', tokens.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+          });
+
+          return res.json({
+            message: 'Login successful (fallback mode)',
+            ...tokens,
+            expiresIn: '7d',
+            fallbackMode: true
+          });
+        }
+      }
+      
+      return res.status(401).json({ 
+        message: 'Invalid credentials',
+        code: 'INVALID_CREDENTIALS'
       });
     }
 
-    const { username, password } = req.body;
-
-    // Find user by username or email
+    // Normal database authentication
     const user = await User.findOne({
       $or: [
         { username: username },
