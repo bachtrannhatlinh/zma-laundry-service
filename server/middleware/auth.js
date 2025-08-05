@@ -77,24 +77,38 @@ const authenticateToken = async (req, res, next) => {
 
 // Middleware to authorize roles
 const authorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ 
-        message: 'Authentication required',
-        code: 'AUTH_REQUIRED'
+  return async (req, res, next) => {
+    // First authenticate the token
+    try {
+      await new Promise((resolve, reject) => {
+        authenticateToken(req, res, (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
       });
-    }
+      
+      // Then check authorization
+      if (!req.user) {
+        return res.status(401).json({ 
+          message: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
 
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ 
-        message: 'Insufficient permissions',
-        code: 'INSUFFICIENT_PERMISSIONS',
-        required: roles,
-        current: req.user.role
-      });
-    }
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ 
+          message: 'Insufficient permissions',
+          code: 'INSUFFICIENT_PERMISSIONS',
+          required: roles,
+          current: req.user.role
+        });
+      }
 
-    next();
+      next();
+    } catch (error) {
+      // If authenticateToken failed, it already sent a response
+      return;
+    }
   };
 };
 
