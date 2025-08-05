@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
@@ -21,6 +22,15 @@ const orderValidation = [
 // GET /api/orders - Lấy danh sách đơn hàng (Protected - Admin/Manager only)
 router.get('/', adminOrManager, async (req, res) => {
   try {
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database connection unavailable. Orders data requires database access.',
+        code: 'DATABASE_UNAVAILABLE',
+        fallbackNote: 'Currently running in fallback mode. Database-dependent features are not available.'
+      });
+    }
+
     const { phone, status, page = 1, limit = 10 } = req.query;
     const query = {};
     

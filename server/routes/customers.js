@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Customer = require('../models/Customer');
 const { adminOrManager } = require('../middleware/auth');
 
@@ -7,6 +8,15 @@ const router = express.Router();
 // GET /api/customers - Lấy danh sách khách hàng (Protected - Admin/Manager only)
 router.get('/', adminOrManager, async (req, res) => {
   try {
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database connection unavailable. Customer data requires database access.',
+        code: 'DATABASE_UNAVAILABLE',
+        fallbackNote: 'Currently running in fallback mode. Database-dependent features are not available.'
+      });
+    }
+
     const { page = 1, limit = 10 } = req.query;
     
     const customers = await Customer.find()
