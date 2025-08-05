@@ -1,4 +1,5 @@
 {
+  "name": "zma-laundry-admin-prod",
   "version": 2,
   "builds": [
     {
@@ -9,11 +10,6 @@
       }
     }
   ],
-  "functions": {
-    "app/api/auth.js": {
-      "includeFiles": "**"
-    }
-  },
   "routes": [
     {
       "src": "/manifest.json",
@@ -23,7 +19,7 @@
       }
     },
     {
-      "src": "/favicon.ico",
+      "src": "/favicon.ico", 
       "dest": "/favicon.ico"
     },
     {
@@ -48,5 +44,8 @@
       "CI": "false"
     }
   },
-  "public": true
+  "public": true,
+  "github": {
+    "silent": true
+  }
 }
