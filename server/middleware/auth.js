@@ -1,5 +1,7 @@
 const JWTUtils = require('../utils/jwt');
 const User = require('../models/User');
+const mongoose = require('mongoose');
+const { FALLBACK_ADMIN } = require('../utils/fallbackAuth');
 
 // Middleware to authenticate token
 const authenticateToken = async (req, res, next) => {
@@ -15,6 +17,28 @@ const authenticateToken = async (req, res, next) => {
 
     const decoded = JWTUtils.verifyToken(token);
     
+    // Check if this is a fallback admin user
+    if (decoded.userId === 'fallback-admin-id') {
+      // Attach fallback user info to request
+      req.user = {
+        userId: FALLBACK_ADMIN._id,
+        username: FALLBACK_ADMIN.username,
+        email: FALLBACK_ADMIN.email,
+        role: FALLBACK_ADMIN.role,
+        fullName: FALLBACK_ADMIN.fullName,
+        fallbackMode: true
+      };
+      return next();
+    }
+
+    // Check database connection for regular users
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        code: 'DATABASE_UNAVAILABLE'
+      });
+    }
+
     // Check if user still exists and is active
     const user = await User.findById(decoded.userId);
     if (!user || !user.isActive) {
