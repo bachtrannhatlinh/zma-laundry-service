@@ -4,41 +4,68 @@ const User = require('../models/User');
 
 const router = express.Router();
 
-// Debug endpoint - chỉ dùng để debug production issues
-router.get('/debug', async (req, res) => {
+// Test database connection with retry
+router.get('/test-connection', async (req, res) => {
   try {
-    const debugInfo = {
+    console.log('🔍 Testing database connection...');
+    
+    const connectionInfo = {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       mongoUri: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
-      mongoConnectionState: mongoose.connection.readyState,
-      mongoConnectionStates: {
+      currentState: mongoose.connection.readyState,
+      states: {
         0: 'disconnected',
-        1: 'connected',
+        1: 'connected', 
         2: 'connecting',
         3: 'disconnecting'
       }
     };
 
+    // If not connected, try to connect
+    if (mongoose.connection.readyState !== 1 && process.env.MONGODB_URI) {
+      console.log('🔄 Attempting manual connection...');
+      
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          serverSelectionTimeoutMS: 10000,
+          connectTimeoutMS: 10000,
+          socketTimeoutMS: 45000,
+          maxPoolSize: 5,
+          minPoolSize: 1,
+          bufferMaxEntries: 0,
+          bufferCommands: false
+        });
+        
+        connectionInfo.manualConnection = 'SUCCESS';
+        connectionInfo.newState = mongoose.connection.readyState;
+        
+      } catch (connectError) {
+        connectionInfo.manualConnection = 'FAILED';
+        connectionInfo.error = connectError.message;
+      }
+    }
+
     // Test database operations if connected
     if (mongoose.connection.readyState === 1) {
       try {
+        const User = require('../models/User');
         const userCount = await User.countDocuments();
         const adminUser = await User.findOne({ role: 'admin' });
         
-        debugInfo.database = {
+        connectionInfo.database = {
           userCount,
           adminExists: !!adminUser,
           adminUsername: adminUser?.username
         };
       } catch (dbError) {
-        debugInfo.database = {
+        connectionInfo.database = {
           error: dbError.message
         };
       }
     }
 
-    res.json(debugInfo);
+    res.json(connectionInfo);
   } catch (error) {
     res.status(500).json({
       error: error.message,

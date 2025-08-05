@@ -148,42 +148,64 @@ app.use('*', (req, res) => {
 if (process.env.MONGODB_URI) {
   const connectDB = async () => {
     try {
+      // More aggressive connection options for Vercel
       await mongoose.connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-        socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-        maxPoolSize: 10, // Maintain up to 10 socket connections
+        serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+        socketTimeoutMS: 45000, // 45 seconds socket timeout
+        connectTimeoutMS: 10000, // 10 seconds connection timeout
+        maxPoolSize: 5, // Smaller pool for serverless
+        minPoolSize: 1, // Minimum pool size
+        maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
         bufferMaxEntries: 0, // Disable mongoose buffering
         bufferCommands: false, // Disable mongoose buffering
+        heartbeatFrequencyMS: 10000, // Send heartbeat every 10 seconds
+        retryWrites: true,
+        retryReads: true
       });
-      console.log('Connected to MongoDB');
+      console.log('✅ Connected to MongoDB successfully');
     } catch (error) {
-      console.error('MongoDB connection error:', error);
-      // Don't exit in production/Vercel, but log the error
-      if (process.env.NODE_ENV !== 'production') {
-        process.exit(1);
+      console.error('❌ MongoDB connection error:', error.message);
+      console.error('Full error:', error);
+      
+      // Try to reconnect after delay in production
+      if (process.env.NODE_ENV === 'production') {
+        console.log('🔄 Attempting to reconnect in 5 seconds...');
+        setTimeout(connectDB, 5000);
       }
     }
   };
   
+  // Initial connection
   connectDB();
   
-  // Handle connection events
+  // Handle connection events with more detailed logging
   mongoose.connection.on('connected', () => {
-    console.log('Mongoose connected to MongoDB');
+    console.log('🟢 Mongoose connected to MongoDB Atlas');
   });
   
   mongoose.connection.on('error', (err) => {
-    console.error('Mongoose connection error:', err);
+    console.error('🔴 Mongoose connection error:', err.message);
   });
   
   mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose disconnected from MongoDB');
+    console.log('🟡 Mongoose disconnected from MongoDB');
+  });
+  
+  mongoose.connection.on('reconnected', () => {
+    console.log('🟢 Mongoose reconnected to MongoDB');
+  });
+  
+  // Handle process termination
+  process.on('SIGINT', async () => {
+    await mongoose.connection.close();
+    console.log('MongoDB connection closed due to application termination');
+    process.exit(0);
   });
   
 } else {
-  console.log('MongoDB URI not provided, running without database');
+  console.log('⚠️  MongoDB URI not provided, running without database');
 }
 
 // Only listen on port if not in Vercel environment
