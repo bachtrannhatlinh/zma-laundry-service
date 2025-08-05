@@ -189,6 +189,31 @@ router.post('/logout', (req, res) => {
 // GET /api/auth/me - Get current user info
 router.get('/me', authenticateToken, async (req, res) => {
   try {
+    // Check if this is a fallback user
+    if (req.user.userId === 'fallback-admin-id') {
+      return res.json({
+        user: {
+          _id: FALLBACK_ADMIN._id,
+          username: FALLBACK_ADMIN.username,
+          email: FALLBACK_ADMIN.email,
+          fullName: FALLBACK_ADMIN.fullName,
+          role: FALLBACK_ADMIN.role,
+          isActive: FALLBACK_ADMIN.isActive,
+          createdAt: FALLBACK_ADMIN.createdAt,
+          lastLogin: FALLBACK_ADMIN.lastLogin
+        },
+        fallbackMode: true
+      });
+    }
+
+    // Check database connection for regular users
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        code: 'DATABASE_UNAVAILABLE'
+      });
+    }
+
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -216,6 +241,32 @@ router.post('/refresh', async (req, res) => {
     }
 
     const decoded = JWTUtils.verifyToken(refreshToken);
+    
+    // Check if this is a fallback user
+    if (decoded.userId === 'fallback-admin-id') {
+      // Generate new tokens for fallback admin
+      const tokens = JWTUtils.generateTokenPair({
+        _id: FALLBACK_ADMIN._id,
+        username: FALLBACK_ADMIN.username,
+        email: FALLBACK_ADMIN.email,
+        role: FALLBACK_ADMIN.role
+      });
+
+      return res.json({
+        message: 'Token refreshed successfully (fallback mode)',
+        ...tokens,
+        fallbackMode: true
+      });
+    }
+
+    // Check database connection for regular users
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        code: 'DATABASE_UNAVAILABLE'
+      });
+    }
+
     const user = await User.findById(decoded.userId);
     
     if (!user || !user.isActive) {
