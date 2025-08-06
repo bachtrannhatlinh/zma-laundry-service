@@ -24,9 +24,9 @@ const allowedOrigins = [
   process.env.CORS_ORIGIN || 'http://localhost:3000',
   'http://localhost:3000',
   'http://localhost:4000',
-  'https://btnlaundry-service.vercel.app',
+  "https://server-three-rust-84.vercel.app",
   // Client web admin domains
-  'https://zma-laundry-admin-p37ccq2sp-bachtrannhatlinhs-projects.vercel.app',
+  'https://client-web-admin-itjdidckp-bachtrannhatlinhs-projects.vercel.app',
   'https://zma-laundry-admin-3ualzoibt-bachtrannhatlinhs-projects.vercel.app',
   'https://zma-laundry-admin.vercel.app',
   // Zalo domains

@@ -29,7 +29,7 @@ const createAdminUser = async () => {
     console.log('Username:', admin.username);
     console.log('Email:', admin.email);
     console.log('Role:', admin.role);
-    console.log('\n⚠️  Default password: admin123456');
+    console.log('\n⚠️  Default password: admin123456', admin.password);
     console.log('⚠️  Please change the password after first login!');
 
   } catch (error) {

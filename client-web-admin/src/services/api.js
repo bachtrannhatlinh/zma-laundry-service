@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://btnlaundry-service.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://server-three-rust-84.vercel.app'
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/api`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -81,14 +81,6 @@ const adminService = {
   },
 
   updateOrderStatus: async (orderId, status) => {
-    console.log('Sending request:', {
-      url: `/orders/${orderId}/status`,
-      method: 'PUT',
-      body: { status },
-      orderId,
-      status
-    });
-    
     // Validate status client-side first
     const validStatuses = ['pending', 'confirmed', 'picked_up', 'washing', 'ready', 'completed', 'cancelled'];
     if (!validStatuses.includes(status)) {
@@ -128,7 +120,6 @@ const adminService = {
 };
 
 export default adminService;
-
 
 
 

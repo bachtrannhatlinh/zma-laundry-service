@@ -3,10 +3,12 @@ import { message } from 'antd';
 
 const AuthContext = createContext({});
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 // Auth service functions
 const authService = {
   login: async (credentials) => {
-    const response = await fetch('https://btnlaundry-service.vercel.app/api/auth/login', {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +26,7 @@ const authService = {
   },
 
   logout: async () => {
-    const response = await fetch('https://btnlaundry-service.vercel.app/api/auth/logout', {
+    const response = await fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include'
     });
@@ -42,7 +44,7 @@ const authService = {
       throw new Error('No token found');
     }
 
-    const response = await fetch('https://btnlaundry-service.vercel.app/api/auth/me', {
+    const response = await fetch(`${API_URL}/api/auth/me`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ const authService = {
       throw new Error('No refresh token found');
     }
 
-    const response = await fetch('https://btnlaundry-service.vercel.app/api/auth/refresh', {
+    const response = await fetch(`${API_URL}/api/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

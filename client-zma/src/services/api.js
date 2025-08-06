@@ -1,5 +1,5 @@
 // API service cho dịch vụ giặt là
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://btnlaundry-service.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'server-three-rust-84.vercel.app/api';
 
 export const laundryService = {
   // Tạo đơn hàng mới

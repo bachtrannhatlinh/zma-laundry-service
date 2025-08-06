@@ -1,50 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Table, Tag } from 'antd';
-import { 
-  ShoppingOutlined, 
-  UserOutlined, 
-  DollarOutlined, 
-  ClockCircleOutlined 
-} from '@ant-design/icons';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import adminService from '../services/api';
+import React, { useState, useEffect } from "react";
+import { Card, Row, Col, Statistic, Table, Tag } from "antd";
+import {
+  ShoppingOutlined,
+  UserOutlined,
+  DollarOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import adminService from "../services/api";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({});
   const [recentOrders, setRecentOrders] = useState([]);
+  const pagination = { current: 1, pageSize: 10, total: 0 }
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
+  const paramOrders = {
+    page: pagination.current,
+    limit: pagination.pageSize,
+    search: '',
+    status: '',
+  };
+
+  const paramCustomers = {
+    page: pagination.current,
+    limit: pagination.pageSize,
+    search: '',
+  };
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       const [ordersData, customersData] = await Promise.all([
-        adminService.getOrders(),
-        adminService.getCustomers()
+        adminService.getOrders(paramOrders),
+        adminService.getCustomers(paramCustomers),
       ]);
-      
+
       const orders = ordersData.orders || [];
       const customers = customersData.customers || [];
-      
+
       // Tính toán stats từ data thật
       const totalOrders = orders.length;
       const totalCustomers = customers.length;
-      const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-      const pendingOrders = orders.filter(order => order.status === 'pending').length;
-      
+      const totalRevenue = orders.reduce(
+        (sum, order) => sum + (order.totalAmount || 0),
+        0
+      );
+      const pendingOrders = orders.filter(
+        (order) => order.status === "pending"
+      ).length;
+
       setStats({
         totalOrders,
         totalCustomers,
         totalRevenue,
-        pendingOrders
+        pendingOrders,
       });
-      
+
       setRecentOrders(orders.slice(0, 10));
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -52,54 +79,52 @@ const Dashboard = () => {
 
   const getStatusColor = (status) => {
     const statusColors = {
-      pending: 'orange',
-      confirmed: 'blue',
-      processing: 'purple',
-      ready: 'cyan',
-      completed: 'green',
-      cancelled: 'red'
+      pending: "orange",
+      confirmed: "blue",
+      processing: "purple",
+      ready: "cyan",
+      completed: "green",
+      cancelled: "red",
     };
-    return statusColors[status] || 'default';
+    return statusColors[status] || "default";
   };
 
   const getStatusText = (status) => {
     const statusTexts = {
-      pending: 'Chờ xác nhận',
-      confirmed: 'Đã xác nhận',
-      processing: 'Đang xử lý',
-      ready: 'Sẵn sàng',
-      completed: 'Hoàn thành',
-      cancelled: 'Đã hủy'
+      pending: "Chờ xác nhận",
+      confirmed: "Đã xác nhận",
+      processing: "Đang xử lý",
+      ready: "Sẵn sàng",
+      completed: "Hoàn thành",
+      cancelled: "Đã hủy",
     };
     return statusTexts[status] || status;
   };
 
   const columns = [
     {
-      title: 'Mã đơn hàng',
-      dataIndex: 'orderId',
-      key: 'orderId',
+      title: "Mã đơn hàng",
+      dataIndex: "orderId",
+      key: "orderId",
     },
     {
-      title: 'Khách hàng',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: "Khách hàng",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
+        <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
       ),
     },
     {
-      title: 'Tổng tiền',
-      dataIndex: 'totalAmount',
-      key: 'totalAmount',
-      render: (amount) => `${amount?.toLocaleString('vi-VN')}đ`,
+      title: "Tổng tiền",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (amount) => `${amount?.toLocaleString("vi-VN")}đ`,
     },
   ];
 
@@ -157,8 +182,18 @@ const Dashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`${value?.toLocaleString('vi-VN')}đ`, 'Doanh thu']} />
-                <Line type="monotone" dataKey="revenue" stroke="#1890ff" strokeWidth={2} />
+                <Tooltip
+                  formatter={(value) => [
+                    `${value?.toLocaleString("vi-VN")}đ`,
+                    "Doanh thu",
+                  ]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#1890ff"
+                  strokeWidth={2}
+                />
               </LineChart>
             </ResponsiveContainer>
           </Card>
@@ -180,5 +215,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
