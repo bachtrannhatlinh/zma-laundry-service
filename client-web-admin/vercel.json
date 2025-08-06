@@ -9,11 +9,6 @@
       }
     }
   ],
-  "functions": {
-    "app/api/auth.js": {
-      "includeFiles": "**"
-    }
-  },
   "routes": [
     {
       "src": "/manifest.json",

@@ -24,11 +24,9 @@ const allowedOrigins = [
   process.env.CORS_ORIGIN || 'http://localhost:3000',
   'http://localhost:3000',
   'http://localhost:4000',
-  'https://btnlaundry-service.vercel.app',
+  'https://server-laundry-service.vercel.app',
   // Client web admin domains
-  'https://zma-laundry-admin-p37ccq2sp-bachtrannhatlinhs-projects.vercel.app',
-  'https://zma-laundry-admin-3ualzoibt-bachtrannhatlinhs-projects.vercel.app',
-  'https://zma-laundry-admin.vercel.app',
+  'https://client-web-admin-nj0k3uipd-bachtrannhatlinhs-projects.vercel.app',
   // Zalo domains
   'https://zalo.me',
   'https://chat.zalo.me',
@@ -148,6 +146,7 @@ app.use('*', (req, res) => {
 if (process.env.MONGODB_URI) {
   const connectDB = async () => {
     try {
+      console.log('MONGODB_URI from process.env:', process.env.MONGODB_URI);
       // Fixed connection options for Vercel
       await mongoose.connect(process.env.MONGODB_URI, {
         serverSelectionTimeoutMS: 10000, // 10 seconds timeout
