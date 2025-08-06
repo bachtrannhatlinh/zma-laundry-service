@@ -148,6 +148,7 @@ app.use('*', (req, res) => {
 if (process.env.MONGODB_URI) {
   const connectDB = async () => {
     try {
+      console.log('MONGODB_URI from process.env:', process.env.MONGODB_URI);
       // Fixed connection options for Vercel
       await mongoose.connect(process.env.MONGODB_URI, {
         serverSelectionTimeoutMS: 10000, // 10 seconds timeout

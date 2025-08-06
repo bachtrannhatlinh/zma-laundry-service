@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Card, Button, Input, Space, Modal, message, Tag, Form, InputNumber } from 'antd';
-import { UserOutlined, StarOutlined, PlusOutlined } from '@ant-design/icons';
+import { StarOutlined, PlusOutlined } from '@ant-design/icons';
 import adminService from '../services/api';
 
 const { Search } = Input;
@@ -14,11 +14,8 @@ const Customers = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    fetchCustomers();
-  }, [pagination.current, pagination.pageSize, searchText]);
-
-  const fetchCustomers = async () => {
+  // Sử dụng useCallback để tránh warning về dependency
+  const fetchCustomers = useCallback(async () => {
     try {
       setLoading(true);
       const params = {
@@ -26,7 +23,6 @@ const Customers = () => {
         limit: pagination.pageSize,
         search: searchText
       };
-      
       const response = await adminService.getCustomers(params);
       setCustomers(response.customers || []);
       setPagination(prev => ({
@@ -38,7 +34,11 @@ const Customers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.current, pagination.pageSize, searchText]);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [fetchCustomers]);
 
   const handleUpdatePoints = async (values) => {
     try {
